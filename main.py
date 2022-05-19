@@ -126,14 +126,20 @@ def game_loop(player, fps=10):
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
         game.blit_score(white, screen)
+        
+        if game.snake.score >= 20:
+            fps = 20
+        elif game.snake.score < 10:
+            fps = 5
+        else:
+            fps = 10    
+        
 
         pygame.display.flip()
 
         fpsClock.tick(fps)
 
     crash()
-
-
 def human_move():
     direction = snake.facing
 
