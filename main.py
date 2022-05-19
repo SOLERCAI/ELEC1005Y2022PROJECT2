@@ -37,6 +37,7 @@ pygame.mixer.music.load("./sound/gaming_bgm.mp3")
 pygame.mixer.music.play(loops=-1)
 
 food_sound = pygame.mixer.Sound('./sound/food_bgm.wav')
+bomb_sound = pygame.mixer.Sound('./sound/bgm_for_mad_dog.wav')
 
 background_img = pygame.image.load(r'./images/background_img.jpg')
 screen.blit(background_img, (0,0))
