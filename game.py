@@ -9,8 +9,8 @@ import numpy as np
 
 class Settings:
     def __init__(self):
-        self.width = 28
-        self.height = 28
+        self.width = 56
+        self.height = 56
         self.rect_len = 15
 
 class Snake:
