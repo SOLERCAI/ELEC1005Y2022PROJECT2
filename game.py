@@ -86,6 +86,7 @@ class Strawberry():
         self.style = str(random.randint(1, 8))
         self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')        
         self.is_bomb = 0
+        self.is_reverse = 0
         self.initialize()
         
     def random_pos(self, snake):
@@ -154,31 +155,61 @@ class Game:
         
         change_direction = move_dict[move]
         
-        if change_direction == 'right' and not self.snake.facing == 'left':
-            self.snake.facing = change_direction
-        if change_direction == 'left' and not self.snake.facing == 'right':
-            self.snake.facing = change_direction
-        if change_direction == 'up' and not self.snake.facing == 'down':
-            self.snake.facing = change_direction
-        if change_direction == 'down' and not self.snake.facing == 'up':
-            self.snake.facing = change_direction
+        if self.strawberry.is_reverse == 1:
+            if change_direction == 'left' and not self.snake.facing == 'left':
+                self.snake.facing = 'right'
+            if change_direction == 'right' and not self.snake.facing == 'right':
+                self.snake.facing = 'left'
+            if change_direction == 'up' and not self.snake.facing == 'down':
+                self.snake.facing = change_direction
+            if change_direction == 'down' and not self.snake.facing == 'up':
+                self.snake.facing = change_direction
+        else:
+            if change_direction == 'right' and not self.snake.facing == 'left':
+                self.snake.facing = change_direction
+            if change_direction == 'left' and not self.snake.facing == 'right':
+                self.snake.facing = change_direction
+            if change_direction == 'up' and not self.snake.facing == 'down':
+                self.snake.facing = change_direction
+            if change_direction == 'down' and not self.snake.facing == 'up':
+                self.snake.facing = change_direction
 
-        self.snake.update()
-        print("snake")
-        print(self.snake.position) 
+        
+
         if self.snake.position == self.strawberry.position:
-            if self.strawberry.is_bomb:
-                reward = -2
-                self.snake.score -= 2
-                from main import eat_bomb
-                eat_bomb()
-            else:
+            print(len(self.snake.segments))
+            
+            if not self.strawberry.is_bomb:
                 reward = 1
                 self.snake.score += 1
-                from main import eat_food
-                eat_food()
+                
+                if self.strawberry.style == '8':
+                    from main import eat_reduce
+                    eat_reduce()
+                    print(self.snake.segments)
+                    if len(self.snake.segments) > 4:
+                        self.snake.segments.pop()
+                        self.snake.segments.pop()
+                
+                elif self.strawberry.style == '7':
+                    from main import eat_reverse
+                    eat_reverse()
+                    self.strawberry.is_reverse = (self.strawberry.is_reverse + 1) % 2
+                    self.strawberry.random_pos(self.snake)               
+                else:
+                    from main import eat_food
+                    eat_food()
+                    self.snake.update()
+            else:
+                reward = -2
+                self.snake.score -= 2
+                
+                from main import eat_bomb
+                eat_bomb() 
+                
             self.strawberry.random_pos(self.snake)
         else:
+            self.snake.update()
             self.snake.segments.pop()
             reward = 0
                 
@@ -186,6 +217,7 @@ class Game:
             return -1
                     
         return reward
+    
     
     def game_end(self):
         end = False
