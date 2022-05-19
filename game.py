@@ -83,7 +83,7 @@ class Strawberry():
     def __init__(self, settings):
         self.settings = settings
         
-        self.style = str(random.randint(1, 8))
+        self.style = str(random.randint(1, 6))
         self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')        
         self.is_bomb = 0
         self.is_reverse = 0
@@ -92,7 +92,7 @@ class Strawberry():
     def random_pos(self, snake):
         self.random_bomb()
         if not self.is_bomb:
-            self.style = str(random.randint(7, 8))
+            self.style = str(random.randint(1, 8))
             self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')
         else:
             self.image = pygame.image.load('images/bomb.bmp')
@@ -100,10 +100,34 @@ class Strawberry():
 
         self.position[0] = random.randint(9, 47)
         self.position[1] = random.randint(9, 47)
-        print(self.position)
+        
         if self.position in snake.segments:
             self.random_pos(snake)
-
+            
+    def random_pos_score(self, snake):
+        #stage 5 normal food <=10
+        if snake.score <= 10:
+            bound = 6
+       
+        if 10 < snake.score <= 15:            
+            bound = 7
+        
+        if snake.score > 15:
+            bound = 8       
+        self.random_bomb()
+        
+        if self.is_bomb and snake.score > 8:
+            self.image = pygame.image.load('images/bomb.bmp')
+        else:
+            self.style = str(random.randint(1, bound))
+            self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')
+        
+        self.position[0] = random.randint(9, 47)
+        self.position[1] = random.randint(9, 47)
+        
+        if self.position in snake.segments:
+            self.random_pos_score(snake)
+            
     def blit(self, screen):
         screen.blit(self.image, [p * self.settings.rect_len for p in self.position])
    
@@ -175,14 +199,19 @@ class Game:
                 self.snake.facing = change_direction
 
         
-
         if self.snake.position == self.strawberry.position:
-            print(len(self.snake.segments))
-            
-            if not self.strawberry.is_bomb:
+            if self.strawberry.is_bomb and self.snake.score > 8:
+                reward = -2
+                self.snake.score -= 2
+                # step2 6
+                # playing the bgm for bomb while the snake eating it
+                from main import eat_bomb
+                eat_bomb() 
+                # here is no self.snake.update()，which represent snake will not increase length as it eat bumb
+            else:
                 reward = 1
                 self.snake.score += 1
-                
+                # stage 4 10 if the num==8 then the 'shorten' food exist
                 if self.strawberry.style == '8':
                     from main import eat_reduce
                     eat_reduce()
@@ -190,7 +219,7 @@ class Game:
                     if len(self.snake.segments) > 4:
                         self.snake.segments.pop()
                         self.snake.segments.pop()
-                
+                # stage 4 9 if the num==7 then the 'reverse' food exist
                 elif self.strawberry.style == '7':
                     from main import eat_reverse
                     eat_reverse()
@@ -200,14 +229,8 @@ class Game:
                     from main import eat_food
                     eat_food()
                     self.snake.update()
-            else:
-                reward = -2
-                self.snake.score -= 2
-                
-                from main import eat_bomb
-                eat_bomb() 
-                
-            self.strawberry.random_pos(self.snake)
+            self.strawberry.random_pos_score(self.snake)
+            print(self.strawberry.style)
         else:
             self.snake.update()
             self.snake.segments.pop()
