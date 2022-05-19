@@ -38,6 +38,8 @@ pygame.mixer.music.play(loops=-1)
 
 food_sound = pygame.mixer.Sound('./sound/food_bgm.wav')
 bomb_sound = pygame.mixer.Sound('./sound/bgm_for_mad_dog.wav')
+reverse_sound = pygame.mixer.Sound('./sound/bgm_for_reversing.wav')
+reduce_sound = pygame.mixer.Sound('./sound/bgm_for_reducing_length.wav')
 
 background_img = pygame.image.load(r'./images/background_img.jpg')
 screen.blit(background_img, (0,0))
@@ -88,8 +90,13 @@ def eat_food():
     pygame.mixer.Sound.play(food_sound)    
 
 def eat_bomb():
-    pygame.mixer.Sound.play(bomb_sound)    
-
+    pygame.mixer.Sound.play(bomb_sound) 
+    
+def eat_reverse():
+    pygame.mixer.Sound.play(reverse_sound)
+    
+def eat_reduce():
+    pygame.mixer.Sound.play(reduce_sound)
 
 def initial_interface():
     intro = True
@@ -111,17 +118,18 @@ def initial_interface():
 
 def game_loop(player, fps=10):
     game.restart_game()
-
+    fps = 5
     while not game.game_end():
 
         pygame.event.pump()
 
         move = human_move()
-        fps = 5
+        
 
         game.do_move(move)
 
         screen.fill(black)
+        screen.blit(background_img, (0,0))
 
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
