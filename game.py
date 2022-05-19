@@ -203,15 +203,14 @@ class Game:
             if self.strawberry.is_bomb and self.snake.score > 8:
                 reward = -2
                 self.snake.score -= 2
-                # step2 6
-                # playing the bgm for bomb while the snake eating it
+                
                 from main import eat_bomb
                 eat_bomb() 
-                # here is no self.snake.update()，which represent snake will not increase length as it eat bumb
+               
             else:
                 reward = 1
                 self.snake.score += 1
-                # stage 4 10 if the num==8 then the 'shorten' food exist
+              
                 if self.strawberry.style == '8':
                     from main import eat_reduce
                     eat_reduce()
@@ -219,7 +218,7 @@ class Game:
                     if len(self.snake.segments) > 4:
                         self.snake.segments.pop()
                         self.snake.segments.pop()
-                # stage 4 9 if the num==7 then the 'reverse' food exist
+               
                 elif self.strawberry.style == '7':
                     from main import eat_reverse
                     eat_reverse()
