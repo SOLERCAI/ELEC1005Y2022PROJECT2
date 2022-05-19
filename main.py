@@ -85,7 +85,10 @@ def crash():
 
 def eat_food():
     pygame.mixer.Sound.play(food_sound)    
-    
+
+def eat_bomb():
+    pygame.mixer.Sound.play(bomb_sound)    
+
 
 def initial_interface():
     intro = True
