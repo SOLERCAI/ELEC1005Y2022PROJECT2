@@ -33,7 +33,13 @@ screen = pygame.display.set_mode((game.settings.width * 15, game.settings.height
 pygame.display.set_caption('Gluttonous')
 
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
+pygame.mixer.music.load("./sound/gaming_bgm.mp3")
+pygame.mixer.music.play(loops=-1)
 
+food_sound = pygame.mixer.Sound('./sound/food_bgm.wav')
+
+background_img = pygame.image.load(r'./images/background_img.jpg')
+screen.blit(background_img, (0,0))
 
 def text_objects(text, font, color=black):
     text_surface = font.render(text, True, color)
@@ -77,6 +83,9 @@ def crash():
     message_display('crashed', game.settings.width / 2 * 15, game.settings.height / 3 * 15, white)
     time.sleep(1)
 
+def eat_food():
+    pygame.mixer.Sound.play(food_sound)    
+    
 
 def initial_interface():
     intro = True
@@ -86,11 +95,11 @@ def initial_interface():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        screen.fill(white)
+        
         message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
-        button('Go!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
-        button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
+        button('Go!', 280, 440, 80, 40, green, bright_green, game_loop, 'human')
+        button('Quit', 480, 440, 80, 40, red, bright_red, quitgame)
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
