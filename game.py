@@ -85,18 +85,21 @@ class Strawberry():
         
         self.style = str(random.randint(1, 8))
         self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')        
+        self.is_bomb = 0
         self.initialize()
         
     def random_pos(self, snake):
-        self.style = str(random.randint(1, 8))
-        self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')                
-        
-        self.position[0] = random.randint(0, self.settings.width-1)
-        self.position[1] = random.randint(0, self.settings.height-1)
+        self.random_bomb()
+        if not self.is_bomb:
+            self.style = str(random.randint(7, 8))
+            self.image = pygame.image.load('images/food' + str(self.style) + '.bmp')
+        else:
+            self.image = pygame.image.load('images/bomb.bmp')
 
-        self.position[0] = random.randint(9, 19)
-        self.position[1] = random.randint(9, 19)
-        
+
+        self.position[0] = random.randint(9, 47)
+        self.position[1] = random.randint(9, 47)
+        print(self.position)
         if self.position in snake.segments:
             self.random_pos(snake)
 
@@ -106,7 +109,12 @@ class Strawberry():
     def initialize(self):
         self.position = [15, 10]
       
-        
+    def random_bomb(self):
+        rand_value = random.randint(1, 10)
+        if rand_value < 10:
+            self.is_bomb = 0
+        else:
+            self.is_bomb = 1    
 class Game:
     """
     """
@@ -156,11 +164,20 @@ class Game:
             self.snake.facing = change_direction
 
         self.snake.update()
-        
+        print("snake")
+        print(self.snake.position) 
         if self.snake.position == self.strawberry.position:
+            if self.strawberry.is_bomb:
+                reward = -2
+                self.snake.score -= 2
+                from main import eat_bomb
+                eat_bomb()
+            else:
+                reward = 1
+                self.snake.score += 1
+                from main import eat_food
+                eat_food()
             self.strawberry.random_pos(self.snake)
-            reward = 1
-            self.snake.score += 1
         else:
             self.snake.segments.pop()
             reward = 0
